@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COM3D2.HighHeel", "COM3D2.HighHeel\COM3D2.HighHeel.csproj", "{387DACC6-B85B-4F2C-B7C6-01424D2CFEBE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{387DACC6-B85B-4F2C-B7C6-01424D2CFEBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{387DACC6-B85B-4F2C-B7C6-01424D2CFEBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{387DACC6-B85B-4F2C-B7C6-01424D2CFEBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{387DACC6-B85B-4F2C-B7C6-01424D2CFEBE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
