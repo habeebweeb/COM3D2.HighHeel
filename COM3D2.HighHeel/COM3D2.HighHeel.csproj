@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net35</TargetFramework>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>

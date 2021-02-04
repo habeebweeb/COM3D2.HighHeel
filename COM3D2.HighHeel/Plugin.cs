@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 
 namespace COM3D2.HighHeel
 {
@@ -18,81 +18,99 @@ namespace COM3D2.HighHeel
         public const string PluginString = PluginName + " " + PluginVersion;
 
         private const string ConfigName = "Configuration.cfg";
-        private const string DatabaseName = "database.json";
 
         private static readonly string ConfigPath = Path.Combine(Paths.ConfigPath, PluginName);
-        private static readonly string DatabasePath = Path.Combine(ConfigPath, DatabaseName);
+        private static readonly string ShoeConfigPath = Path.Combine(ConfigPath, "Configurations");
         public readonly PluginConfig Configuration;
         public new readonly ManualLogSource Logger;
+        private readonly UI.MainWindow mainWindow;
 
-        private readonly UI ui = new();
+        public static bool IsDance { get; private set; }
 
-        public Dictionary<string, MaidConfig> Database { get; private set; }
+        public Dictionary<string, Core.ShoeConfig> ShoeDatabase { get; private set; }
+        public readonly Core.ShoeConfig EditModeConfig = new();
+
+        public bool EditMode { get; set; }
 
         public static Plugin? Instance { get; private set; }
 
         public Plugin()
         {
             Instance = this;
-            Harmony.CreateAndPatchAll(typeof(Hooks));
+            Harmony.CreateAndPatchAll(typeof(Core.Hooks));
             Configuration = new(new(Path.Combine(ConfigPath, ConfigName), false, Info.Metadata));
             Logger = base.Logger;
 
-            try { Database = LoadDatabase(); }
-            catch { Database = new(); }
+            mainWindow = new();
+            mainWindow.ReloadEvent += (_, _) => ShoeDatabase = LoadShoeDatabase();
 
-            ui.OnReloadEvent += (_, _) =>
-            {
-                try { Database = ReloadDatabase(Database); }
-                catch (Exception e)
-                {
-                    var errorVerb = e is IOException ? "load" : "parse";
-                    Logger.LogWarning($"Could not {errorVerb} database because: {e.Message}");
-                }
-            };
+            mainWindow.ExportEvent += (_, args) => ExportConfiguration(EditModeConfig, args.Text);
 
-            ui.OnSaveEvent += (_, _) => SaveDatabase(Database);
+            SceneManager.sceneLoaded += (_, _) => IsDance = FindObjectOfType<DanceMain>() != null;
+
+            ShoeDatabase = LoadShoeDatabase();
         }
 
         private void Update()
         {
-            if (Configuration.UIShortcut.Value.IsUp())
-            {
-                ui.Visible = !ui.Visible;
-                if (ui.Visible) ui.RefreshMaidList();
-            }
+            if (Configuration.UIShortcut.Value.IsUp()) mainWindow.Visible = !mainWindow.Visible;
 
-            ui.Update();
+            mainWindow.Update();
         }
 
-        private void OnGUI() => ui.Draw();
+        private void OnGUI() => mainWindow.Draw();
 
-        private static Dictionary<string, MaidConfig> ReloadDatabase(IDictionary<string, MaidConfig> currentDb) =>
-            new Dictionary<string, MaidConfig>(currentDb)
-                .Concat(LoadDatabase())
-                .GroupBy(kvp => kvp.Key)
-                .ToDictionary(group => group.Key, group => group.Last().Value);
-
-        private static Dictionary<string, MaidConfig> LoadDatabase()
+        private static Dictionary<string, Core.ShoeConfig> LoadShoeDatabase()
         {
-            string databaseJson = File.ReadAllText(DatabasePath);
-            var database = JsonConvert.DeserializeObject<Dictionary<string, MaidConfig>>(databaseJson);
+            var database = new Dictionary<string, Core.ShoeConfig>(StringComparer.OrdinalIgnoreCase);
 
-            return new(database);
+            var shoeConfigs = Directory.GetFiles(ShoeConfigPath, "hhmod_*.json", SearchOption.AllDirectories);
+
+            foreach (var configPath in shoeConfigs)
+            {
+                try
+                {
+                    var key = Path.GetFileNameWithoutExtension(configPath);
+
+                    if (database.ContainsKey(key))
+                    {
+                        Instance!.Logger.LogWarning($"Duplicate configuration filename found: {configPath}. Skipping");
+                        continue;
+                    }
+
+                    var configJson = File.ReadAllText(configPath);
+                    database[key] = JsonConvert.DeserializeObject<Core.ShoeConfig>(configJson);
+                }
+                catch (Exception e)
+                {
+                    var errorVerb = e is IOException ? "load" : "parse";
+                    Instance!.Logger.LogWarning($"Could not {errorVerb} '{configPath}' because: {e.Message}");
+                }
+            }
+
+            return database;
         }
 
-        private static void SaveDatabase(Dictionary<string, MaidConfig> database)
+        private static void ExportConfiguration(Core.ShoeConfig config, string filename)
         {
-            try
-            {
-                File.WriteAllText(DatabasePath, JsonConvert.SerializeObject(database, Formatting.Indented));
-            }
-            catch (Exception e)
-            {
-                if (Instance == null) return;
+            var sanitizedFilename = SanitizeFilename(filename.ToLowerInvariant());
 
-                var errorVerb = e is IOException ? "save" : "parse";
-                Instance.Logger.LogWarning($"Could not {errorVerb} database because: {e.Message}");
+            if (string.IsNullOrEmpty(sanitizedFilename)) sanitizedFilename = "hhmod_configuration";
+            else if (!sanitizedFilename.StartsWith("hhmod_")) sanitizedFilename = "hhmod_" + sanitizedFilename;
+
+            var fullPath = Path.Combine(ShoeConfigPath, sanitizedFilename);
+
+            if (File.Exists(fullPath + ".json")) fullPath += $"{DateTime.Now:yyyyMMddHHmmss}";
+
+            var jsonText = JsonConvert.SerializeObject(config, Formatting.Indented);
+
+            File.WriteAllText(fullPath + ".json", jsonText);
+
+            static string SanitizeFilename(string path)
+            {
+                var invalid = Path.GetInvalidFileNameChars();
+                path = path.Trim();
+                return string.Join("_", path.Split(invalid)).Replace(".", "").Trim('_');
             }
         }
     }
