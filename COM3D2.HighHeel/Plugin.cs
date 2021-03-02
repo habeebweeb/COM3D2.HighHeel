@@ -28,7 +28,7 @@ namespace COM3D2.HighHeel
         public static bool IsDance { get; private set; }
 
         public Dictionary<string, Core.ShoeConfig> ShoeDatabase { get; private set; }
-        public readonly Core.ShoeConfig EditModeConfig = new();
+        public Core.ShoeConfig EditModeConfig = new();
 
         public bool EditMode { get; set; }
 
@@ -46,9 +46,14 @@ namespace COM3D2.HighHeel
 
             mainWindow.ExportEvent += (_, args) => ExportConfiguration(EditModeConfig, args.Text);
 
+            mainWindow.ImportEvent += (_, args) => { ImportConfiguration(ref EditModeConfig, args.Text); mainWindow.editModeConfigUpdate(); };
+
             SceneManager.sceneLoaded += (_, _) => IsDance = FindObjectOfType<DanceMain>() != null;
 
             ShoeDatabase = LoadShoeDatabase();
+
+            ImportConfiguration(ref EditModeConfig, "");
+            mainWindow.editModeConfigUpdate();
         }
 
         private void Update()
@@ -98,9 +103,14 @@ namespace COM3D2.HighHeel
             if (string.IsNullOrEmpty(sanitizedFilename)) sanitizedFilename = "hhmod_configuration";
             else if (!sanitizedFilename.StartsWith("hhmod_")) sanitizedFilename = "hhmod_" + sanitizedFilename;
 
+            if (!Directory.Exists(ShoeConfigPath))
+            {
+                Directory.CreateDirectory(ShoeConfigPath);
+            }
+
             var fullPath = Path.Combine(ShoeConfigPath, sanitizedFilename);
 
-            if (File.Exists(fullPath + ".json")) fullPath += $"{DateTime.Now:yyyyMMddHHmmss}";
+            //if (File.Exists(fullPath + ".json")) fullPath += $"{DateTime.Now:yyyyMMddHHmmss}";
 
             var jsonText = JsonConvert.SerializeObject(config, Formatting.Indented);
 
@@ -112,6 +122,35 @@ namespace COM3D2.HighHeel
                 path = path.Trim();
                 return string.Join("_", path.Split(invalid)).Replace(".", "").Trim('_');
             }
+        }
+
+        private static void ImportConfiguration(ref Core.ShoeConfig config, string filename)
+        {
+            var sanitizedFilename = SanitizeFilename(filename.ToLowerInvariant());
+
+            if (string.IsNullOrEmpty(sanitizedFilename)) sanitizedFilename = "hhmod_configuration";
+            else if (!sanitizedFilename.StartsWith("hhmod_")) sanitizedFilename = "hhmod_" + sanitizedFilename;
+
+            var fullPath = Path.Combine(ShoeConfigPath, sanitizedFilename);
+
+            //if (File.Exists(fullPath + ".json")) fullPath += $"{DateTime.Now:yyyyMMddHHmmss}";
+
+            //var jsonText = JsonConvert.SerializeObject(config, Formatting.Indented);
+
+            //File.WriteAllText(fullPath + ".json", jsonText);
+
+            if (!File.Exists(fullPath + ".json")) return;
+
+            string jsonText = File.ReadAllText(fullPath + ".json");
+
+            config = JsonConvert.DeserializeObject<Core.ShoeConfig>(jsonText);
+
+            static string SanitizeFilename(string path)
+            {
+                var invalid = Path.GetInvalidFileNameChars();
+                path = path.Trim();
+                return string.Join("_", path.Split(invalid)).Replace(".", "").Trim('_');
+            }            
         }
     }
 }
