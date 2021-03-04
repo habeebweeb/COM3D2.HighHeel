@@ -68,6 +68,9 @@ namespace COM3D2.HighHeel
         private static Dictionary<string, Core.ShoeConfig> LoadShoeDatabase()
         {
             var database = new Dictionary<string, Core.ShoeConfig>(StringComparer.OrdinalIgnoreCase);
+            
+            if (!Directory.Exists(ShoeConfigPath))
+                Directory.CreateDirectory(ShoeConfigPath);
 
             var shoeConfigs = Directory.GetFiles(ShoeConfigPath, "hhmod_*.json", SearchOption.AllDirectories);
 
