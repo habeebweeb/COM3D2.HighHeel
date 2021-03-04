@@ -46,14 +46,18 @@ namespace COM3D2.HighHeel
 
             mainWindow.ExportEvent += (_, args) => ExportConfiguration(EditModeConfig, args.Text);
 
-            mainWindow.ImportEvent += (_, args) => { ImportConfiguration(ref EditModeConfig, args.Text); mainWindow.editModeConfigUpdate(); };
+            mainWindow.ImportEvent += (_, args) =>
+            {
+                ImportConfiguration(ref EditModeConfig, args.Text);
+                mainWindow.UpdateEditModeValues();
+            };
 
             SceneManager.sceneLoaded += (_, _) => IsDance = FindObjectOfType<DanceMain>() != null;
 
             ShoeDatabase = LoadShoeDatabase();
 
             ImportConfiguration(ref EditModeConfig, "");
-            mainWindow.editModeConfigUpdate();
+            mainWindow.UpdateEditModeValues();
         }
 
         private void Update()
@@ -68,7 +72,7 @@ namespace COM3D2.HighHeel
         private static Dictionary<string, Core.ShoeConfig> LoadShoeDatabase()
         {
             var database = new Dictionary<string, Core.ShoeConfig>(StringComparer.OrdinalIgnoreCase);
-            
+
             if (!Directory.Exists(ShoeConfigPath))
                 Directory.CreateDirectory(ShoeConfigPath);
 
@@ -103,7 +107,7 @@ namespace COM3D2.HighHeel
         {
             if (!Directory.Exists(ShoeConfigPath))
                 Directory.CreateDirectory(ShoeConfigPath);
-            
+
             var fullPath = CreateConfigFullPath(filename);
 
             var jsonText = JsonConvert.SerializeObject(config, Formatting.Indented);
@@ -119,7 +123,7 @@ namespace COM3D2.HighHeel
 
             string jsonText = File.ReadAllText(fullPath);
 
-            config = JsonConvert.DeserializeObject<Core.ShoeConfig>(jsonText);          
+            config = JsonConvert.DeserializeObject<Core.ShoeConfig>(jsonText);
         }
 
         private static string CreateConfigFullPath(string filename)
@@ -132,13 +136,13 @@ namespace COM3D2.HighHeel
             sanitizedFilename += ".json";
 
             return Path.Combine(ShoeConfigPath, sanitizedFilename);
-            
+
             static string SanitizeFilename(string path)
             {
                 var invalid = Path.GetInvalidFileNameChars();
                 path = path.Trim();
                 return string.Join("_", path.Split(invalid)).Replace(".", "").Trim('_');
-            }      
+            }
         }
     }
 }

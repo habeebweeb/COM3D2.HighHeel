@@ -22,6 +22,7 @@ namespace COM3D2.HighHeel.Core
                 CMT.SearchObjName(FootL, "Bip01 L Toe1"),
                 CMT.SearchObjName(FootL, "Bip01 L Toe2"),
             };
+
             ToesR = new[]
             {
                 CMT.SearchObjName(FootR, "Bip01 R Toe0"),

@@ -10,7 +10,7 @@
         public float FootRAngle { get; set; }
         public float FootRMax { get; set; } = 55f;
         public float ToeRAngle { get; set; } = 280f;
-    
+
         public void Deconstruct(
             out float bodyOffset, out float footLAngle, out float footLMax, out float toeLAngle, out float footRAngle,
             out float footRMax, out float toeRAngle
