@@ -19,6 +19,7 @@ namespace COM3D2.HighHeel.UI
         private static readonly GUIContent EditModeLabel = new("Edit Mode");
         private static readonly GUIContent ConfigPrefixLabel = new("hhmod_");
         private static readonly GUIContent ExportLabel = new("Export");
+        private static readonly GUIContent ImportLabel = new("Import");
 
         private readonly Dictionary<ShoeConfigParameter, NumberInput> inputs = new();
 
@@ -33,10 +34,13 @@ namespace COM3D2.HighHeel.UI
 
         public event EventHandler? ReloadEvent;
         public event EventHandler<TextInputEventArgs>? ExportEvent;
+        public event EventHandler<TextInputEventArgs>? ImportEvent;
+        Core.ShoeConfig editModeConfig;
 
         public MainWindow()
         {
-            var editModeConfig = Plugin.Instance!.EditModeConfig;            
+            //ref var editModeConfig = ref Plugin.Instance!.EditModeConfig;            
+            editModeConfig = Plugin.Instance!.EditModeConfig;            
             inputs[ShoeConfigParameter.BodyOffset] = new("Body Offset", editModeConfig.BodyOffset);
             inputs[ShoeConfigParameter.BodyOffset].InputChangeEvent += (_, a) => editModeConfig.BodyOffset = a.Value;
             inputs[ShoeConfigParameter.FootLAngle] = new("Foot L Angle", editModeConfig.FootLAngle);
@@ -51,6 +55,18 @@ namespace COM3D2.HighHeel.UI
             inputs[ShoeConfigParameter.FootRMax].InputChangeEvent += (_, a) => editModeConfig.FootRMax = a.Value;
             inputs[ShoeConfigParameter.ToeRAngle] = new("Toe R Angle", editModeConfig.ToeRAngle);
             inputs[ShoeConfigParameter.ToeRAngle].InputChangeEvent += (_, a) => editModeConfig.ToeRAngle = a.Value;
+        }
+
+        public void editModeConfigUpdate()
+        {
+            editModeConfig = Plugin.Instance!.EditModeConfig;
+            inputs[ShoeConfigParameter.BodyOffset].Value =  editModeConfig.BodyOffset;            
+            inputs[ShoeConfigParameter.FootLAngle].Value=   editModeConfig.FootLAngle;
+            inputs[ShoeConfigParameter.FootLMax]  .Value=   editModeConfig.FootLMax;
+            inputs[ShoeConfigParameter.ToeLAngle] .Value=   editModeConfig.ToeLAngle;
+            inputs[ShoeConfigParameter.FootRAngle].Value=   editModeConfig.FootRAngle;
+            inputs[ShoeConfigParameter.FootRMax]  .Value=   editModeConfig.FootRMax;
+            inputs[ShoeConfigParameter.ToeRAngle].Value = editModeConfig.ToeRAngle;            
         }
 
         public void Update()
@@ -70,7 +86,7 @@ namespace COM3D2.HighHeel.UI
 
             var pluginEnabled = Plugin.Instance!.Configuration.Enabled.Value;
             var editModeEnabled = Plugin.Instance!.EditMode;
-            windowRect.height = pluginEnabled && editModeEnabled ? 265f : 55f;
+            windowRect.height = pluginEnabled && editModeEnabled ? 280f : 55f;
 
             windowRect = GUILayout.Window(WindowId, windowRect, GuiFunc, string.Empty, WindowStyle);
         }
@@ -138,6 +154,8 @@ namespace COM3D2.HighHeel.UI
             configName = GUILayout.TextField(configName, ConfigNameLayout);
 
             if (GUILayout.Button(ExportLabel, NoExpand)) ExportEvent?.Invoke(this, new(configName));
+            
+            if (GUILayout.Button(ImportLabel, NoExpand)) ImportEvent?.Invoke(this, new(configName));
             
             GUILayout.EndHorizontal();
         }
