@@ -5,6 +5,7 @@ using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Newtonsoft.Json;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace COM3D2.HighHeel
@@ -36,8 +37,19 @@ namespace COM3D2.HighHeel
 
         public Plugin()
         {
+            try
+            {
+                Harmony.CreateAndPatchAll(typeof(Core.Hooks));
+            }
+            catch (Exception e)
+            {
+                base.Logger.LogError($"Unable to inject core because: {e.Message}");
+                base.Logger.LogError(e.StackTrace);
+                DestroyImmediate(this);
+                return;
+            }
+
             Instance = this;
-            Harmony.CreateAndPatchAll(typeof(Core.Hooks));
             Configuration = new(new(Path.Combine(ConfigPath, ConfigName), false, Info.Metadata));
             Logger = base.Logger;
 
