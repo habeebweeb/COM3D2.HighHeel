@@ -121,7 +121,8 @@ namespace COM3D2.HighHeel.Core
             }
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(TBody), nameof(TBody.LoadBody_R))]
+        [HarmonyPostfix,
+         HarmonyPatch(typeof(TBody), nameof(TBody.LoadBody_R), typeof(string), typeof(Maid), typeof(int), typeof(bool))]
         public static void OnLoadBody_R(TBody __instance)
         {
             if (__instance.boMAN) return;
