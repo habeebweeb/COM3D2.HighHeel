@@ -8,28 +8,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="0Harmony, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\lib\0Harmony.dll</HintPath>
+      <Reference Include="0Harmony">
+        <HintPath>..\..\Dependencies\0Harmony.dll</HintPath>
       </Reference>
-      <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\lib\Assembly-CSharp.dll</HintPath>
+      <Reference Include="Assembly-CSharp">
+        <HintPath>..\..\Dependencies\Assembly-CSharp.dll</HintPath>
       </Reference>
-      <Reference Include="BepInEx, Version=5.3.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\lib\BepInEx.dll</HintPath>
-      </Reference>
-      <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-        <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\lib\UnityEngine.dll</HintPath>
+      <Reference Include="BepInEx">
+        <HintPath>..\..\Dependencies\BepInEx.dll</HintPath>
       </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="IsExternalInit" Version="1.0.0">
+      <PackageReference Include="IsExternalInit" Version="1.0.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="Unity3D.SDK" Version="2021.1.14.1" />
     </ItemGroup>
     
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
