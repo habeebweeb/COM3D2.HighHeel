@@ -13,7 +13,7 @@ namespace COM3D2.HighHeel
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginGuid = "com.habeebweeb.com3d2.highheel";
+        public const string PluginGuid = "com.ongame.com3d2.highheel";
         public const string PluginName = "COM3D2.HighHeel";
         public const string PluginVersion = "1.0.0";
         public const string PluginString = PluginName + " " + PluginVersion;
