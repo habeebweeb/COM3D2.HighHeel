@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<RuleSet Name="StyleCop.Analyzers rules" Description="My style rule preferences" ToolsVersion="14.0">
+
+  <!-- <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers."> -->
+  <!--   <Rule Id="" Action="None" /> -->
+  <!-- </Rules> -->
+
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.ReadabilityRules">
+    <Rule Id="SA1101" Action="None" Description="Prefix local calls with this" />
+  </Rules>
+
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.MaintainabilityRules">
+    <!-- NOTE: SA1401 is suppressed temporarily and will be addressed in the future -->
+    <Rule Id="SA1401" Action="None" Description="Fields should be private" />
+    <Rule Id="SA1407" Action="None" Description="Arithmetic expressions should declare precedence" />
+    <Rule Id="SA1408" Action="None" Description="Conditional expressions should declare precedence" />
+  </Rules>
+
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
+    <Rule Id="SA1503" Action="None" Description="Braces should not be omitted" />
+    <Rule Id="SA1519" Action="None" Description="Braces should not be omitted from multi-line child statement" />
+  </Rules>
+
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
+    <!-- NOTE: Documentation rules should only be temporary as I might document things in the future. -->
+    <Rule Id="SA1600" Action="None" Description="Elements should be documented" />
+    <Rule Id="SA1602" Action="None" Description="Enumeration items should be documented" />
+    <Rule Id="SA1633" Action="None" Description="File should have header" />
+  </Rules>
+
+</RuleSet>
