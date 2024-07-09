@@ -1,9 +1,6 @@
-﻿namespace COM3D2.HighHeel.UI
-{
-    public class TextInputEventArgs : System.EventArgs
-    {
-        public readonly string Text;
+namespace COM3D2.HighHeel.UI;
 
-        public TextInputEventArgs(string text) => Text = text;
-    }
+public class TextInputEventArgs(string text) : EventArgs
+{
+    public readonly string Text = text;
 }

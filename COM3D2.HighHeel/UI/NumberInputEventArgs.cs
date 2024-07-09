@@ -1,9 +1,6 @@
-﻿namespace COM3D2.HighHeel.UI
-{
-    public class NumberInputEventArgs : System.EventArgs
-    {
-        public readonly float Value;
+namespace COM3D2.HighHeel.UI;
 
-        public NumberInputEventArgs(float value) => Value = value;
-    }
+public class NumberInputEventArgs(float value) : EventArgs
+{
+    public readonly float Value = value;
 }
