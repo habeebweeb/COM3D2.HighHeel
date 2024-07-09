@@ -7,7 +7,7 @@ namespace COM3D2.HighHeel.Core
 {
     public static class Hooks
     {
-        private static readonly float[] ToeX = { 15f, -5f, -5f };
+        private static readonly float[] ToeX = { 15f, 0f, -5f, 0f, -5f, 0f };
         private static readonly Dictionary<TBody, MaidTransforms> MaidTransforms = new();
         private static readonly Dictionary<TBody, string> ShoeConfigs = new();
 
@@ -71,16 +71,20 @@ namespace COM3D2.HighHeel.Core
                 if (!Plugin.Instance.ShoeDatabase.TryGetValue(configName, out config)) return;
             }
 
-            var (body, footL, toesL, footR, toesR) = transforms;
-            var (offset, footLAngle, footLMax, toeLAngle, footRAngle, footRMax, toeRAngle) = config;
+            //var (body, footL, toesL, footR, toesR) = transforms;
+            var (body, footL, toesL, toeL0, toeL1, toeL2, footR, toesR, toeR0, toeR1, toeR2) = transforms;
+            var (offset, footLAngle, footLMax, toeLAngle, toeL0Angle, toeL01Angle, toeL1Angle, toeL11Angle, toeL2Angle, toeL21Angle, footRAngle, footRMax, toeRAngle, toeR0Angle, toeR01Angle, toeR1Angle, toeR11Angle, toeR2Angle, toeR21Angle) = config;
 
             body.Translate(Vector3.up * offset, Space.World);
 
             RotateFoot(footL, footLAngle, footLMax);
             RotateFoot(footR, footRAngle, footRMax);
 
-            RotateToes(toesL, toeLAngle, true);
-            RotateToes(toesR, toeRAngle, false);
+            //RotateToes(toesL, toeLAngle, true);
+            //RotateToes(toesR, toeRAngle, false);
+
+            RotateToesIndividual(toesL, toeLAngle, new List<float>() { toeL0Angle, toeL01Angle, toeL1Angle, toeL11Angle, toeL2Angle, toeL21Angle }, true);
+            RotateToesIndividual(toesR, toeRAngle, new List<float>() { toeR0Angle, toeR01Angle, toeR1Angle, toeR11Angle, toeR2Angle, toeR21Angle }, false);
 
             __instance.SkinMeshUpdate();
 
@@ -119,10 +123,32 @@ namespace COM3D2.HighHeel.Core
                     toes[i].localRotation = Quaternion.Euler(ToeX[i] * inverse, 0f, angle + offset);
                 }
             }
+
+            static void RotateToesIndividual(IList<Transform> toes, float angle, List<float> individualAngle, bool left)
+            {
+                var inverse = left ? 1f : -1f;
+
+                for (var i = 0; i < 3; i++)
+                {
+                    var offset = 0f;
+
+                    if (i != 1)
+                    {
+                        offset = angle switch
+                        {
+                            > 260f => 0f,
+                            < 240f => 15f,
+                            _ => 5f,
+                        };
+                    }
+
+                    toes[i].localRotation = Quaternion.Euler(ToeX[i] * inverse, 0f, angle + offset + individualAngle[i]);
+                }
+            }
         }
 
         [HarmonyPostfix,
-         HarmonyPatch(typeof(TBody), nameof(TBody.LoadBody_R), typeof(string), typeof(Maid), typeof(int), typeof(bool))]
+         HarmonyPatch(typeof(TBody), nameof(TBody.LoadBody_R), typeof(string), typeof(Maid))]
         public static void OnLoadBody_R(TBody __instance)
         {
             if (__instance.boMAN) return;
