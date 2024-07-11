@@ -5,7 +5,6 @@ using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Newtonsoft.Json;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace COM3D2.HighHeel
@@ -37,19 +36,8 @@ namespace COM3D2.HighHeel
 
         public Plugin()
         {
-            try
-            {
-                Harmony.CreateAndPatchAll(typeof(Core.Hooks));
-            }
-            catch (Exception e)
-            {
-                base.Logger.LogError($"Unable to inject core because: {e.Message}");
-                base.Logger.LogError(e.StackTrace);
-                DestroyImmediate(this);
-                return;
-            }
-
             Instance = this;
+            Harmony.CreateAndPatchAll(typeof(Core.Hooks));
             Configuration = new(new(Path.Combine(ConfigPath, ConfigName), false, Info.Metadata));
             Logger = base.Logger;
 
@@ -60,15 +48,23 @@ namespace COM3D2.HighHeel
 
             mainWindow.ImportEvent += (_, args) =>
             {
-                ImportConfiguration(ref EditModeConfig, args.Text);
-                mainWindow.UpdateEditModeValues();
+                ImportConfigsAndUpdate(args.Text);
+                //ImportConfiguration(ref EditModeConfig, args.Text);
+                //mainWindow.UpdateEditModeValues();
             };
 
             SceneManager.sceneLoaded += (_, _) => IsDance = FindObjectOfType<DanceMain>() != null;
 
             ShoeDatabase = LoadShoeDatabase();
 
-            ImportConfiguration(ref EditModeConfig, "");
+            ImportConfigsAndUpdate("");
+            //ImportConfiguration(ref EditModeConfig, "");
+            //mainWindow.UpdateEditModeValues();
+        }
+
+        public void ImportConfigsAndUpdate(string ConfigName)
+        {
+            ImportConfiguration(ref EditModeConfig, ConfigName);
             mainWindow.UpdateEditModeValues();
         }
 

@@ -18,8 +18,8 @@ namespace COM3D2.HighHeel.UI
         private static readonly GUIContent ReloadLabel = new("Reload");
         private static readonly GUIContent EditModeLabel = new("Edit Mode");
         private static readonly GUIContent ConfigPrefixLabel = new("hhmod_");
-        private static readonly GUIContent ExportLabel = new("Export");
         private static readonly GUIContent ImportLabel = new("Import");
+        private static readonly GUIContent ExportLabel = new("Export");
 
         private readonly Dictionary<ShoeConfigParameter, NumberInput> inputs = new();
         private Core.ShoeConfig editModeConfig;
@@ -34,8 +34,8 @@ namespace COM3D2.HighHeel.UI
         private GUIStyle WindowStyle => windowStyle ??= new(GUI.skin.box);
 
         public event EventHandler? ReloadEvent;
-        public event EventHandler<TextInputEventArgs>? ExportEvent;
         public event EventHandler<TextInputEventArgs>? ImportEvent;
+        public event EventHandler<TextInputEventArgs>? ExportEvent;
 
         public MainWindow()
         {
@@ -102,16 +102,54 @@ namespace COM3D2.HighHeel.UI
             inputs[ShoeConfigParameter.ToeL2Angle].Value = editModeConfig.ToeL2Angle;
             inputs[ShoeConfigParameter.ToeL21Angle].Value = editModeConfig.ToeL21Angle;
 
+            //inputs[ShoeConfigParameter.ToeL0AngleX].Value = editModeConfig.ToeL0AngleX;
+            //inputs[ShoeConfigParameter.ToeL0AngleY].Value = editModeConfig.ToeL0AngleY;
+            //inputs[ShoeConfigParameter.ToeL0AngleZ].Value = editModeConfig.ToeL0AngleZ;
+            //inputs[ShoeConfigParameter.ToeL01AngleX].Value = editModeConfig.ToeL01AngleY;
+            //inputs[ShoeConfigParameter.ToeL01AngleY].Value = editModeConfig.ToeL01AngleY;
+            //inputs[ShoeConfigParameter.ToeL01AngleZ].Value = editModeConfig.ToeL01AngleZ;
+            //inputs[ShoeConfigParameter.ToeL1AngleX].Value = editModeConfig.ToeL1AngleX;
+            //inputs[ShoeConfigParameter.ToeL1AngleY].Value = editModeConfig.ToeL1AngleY;
+            //inputs[ShoeConfigParameter.ToeL1AngleZ].Value = editModeConfig.ToeL1AngleZ;
+            //inputs[ShoeConfigParameter.ToeL11AngleX].Value = editModeConfig.ToeL11AngleX;
+            //inputs[ShoeConfigParameter.ToeL11AngleY].Value = editModeConfig.ToeL11AngleY;
+            //inputs[ShoeConfigParameter.ToeL11AngleZ].Value = editModeConfig.ToeL11AngleZ;
+            //inputs[ShoeConfigParameter.ToeL2AngleX].Value = editModeConfig.ToeL2AngleX;
+            //inputs[ShoeConfigParameter.ToeL2AngleY].Value = editModeConfig.ToeL2AngleY;
+            //inputs[ShoeConfigParameter.ToeL2AngleZ].Value = editModeConfig.ToeL2AngleZ;
+            //inputs[ShoeConfigParameter.ToeL21AngleX].Value = editModeConfig.ToeL21AngleX;
+            //inputs[ShoeConfigParameter.ToeL21AngleY].Value = editModeConfig.ToeL21AngleY;
+            //inputs[ShoeConfigParameter.ToeL21AngleZ].Value = editModeConfig.ToeL21AngleZ;
+
             inputs[ShoeConfigParameter.FootRAngle].Value = editModeConfig.FootRAngle;
             inputs[ShoeConfigParameter.FootRMax].Value = editModeConfig.FootRMax;
             inputs[ShoeConfigParameter.ToeRAngle].Value = editModeConfig.ToeRAngle;
 
-            inputs[ShoeConfigParameter.ToeR0Angle].Value = editModeConfig.ToeR0Angle;
+            inputs[ShoeConfigParameter.ToeR0Angle].Value = editModeConfig.ToeR0Angle; 
             inputs[ShoeConfigParameter.ToeR01Angle].Value = editModeConfig.ToeR01Angle;
             inputs[ShoeConfigParameter.ToeR1Angle].Value = editModeConfig.ToeR1Angle;
             inputs[ShoeConfigParameter.ToeR11Angle].Value = editModeConfig.ToeR11Angle;
             inputs[ShoeConfigParameter.ToeR2Angle].Value = editModeConfig.ToeR2Angle;
             inputs[ShoeConfigParameter.ToeR21Angle].Value = editModeConfig.ToeR21Angle;
+
+            //inputs[ShoeConfigParameter.ToeR0AngleX].Value = editModeConfig.ToeR0AngleX;
+            //inputs[ShoeConfigParameter.ToeR0AngleY].Value = editModeConfig.ToeR0AngleY;
+            //inputs[ShoeConfigParameter.ToeR0AngleZ].Value = editModeConfig.ToeR0AngleZ;
+            //inputs[ShoeConfigParameter.ToeR01AngleX].Value = editModeConfig.ToeR01AngleX;
+            //inputs[ShoeConfigParameter.ToeR01AngleY].Value = editModeConfig.ToeR01AngleY;
+            //inputs[ShoeConfigParameter.ToeR01AngleZ].Value = editModeConfig.ToeR01AngleZ;
+            //inputs[ShoeConfigParameter.ToeR1AngleX].Value = editModeConfig.ToeR1AngleX;
+            //inputs[ShoeConfigParameter.ToeR1AngleY].Value = editModeConfig.ToeR1AngleY;
+            //inputs[ShoeConfigParameter.ToeR1AngleZ].Value = editModeConfig.ToeR1AngleZ;
+            //inputs[ShoeConfigParameter.ToeR11AngleX].Value = editModeConfig.ToeR11AngleX;
+            //inputs[ShoeConfigParameter.ToeR11AngleY].Value = editModeConfig.ToeR11AngleY;
+            //inputs[ShoeConfigParameter.ToeR11AngleZ].Value = editModeConfig.ToeR11AngleZ;
+            //inputs[ShoeConfigParameter.ToeR2AngleX].Value = editModeConfig.ToeR2AngleX;
+            //inputs[ShoeConfigParameter.ToeR2AngleY].Value = editModeConfig.ToeR2AngleY;
+            //inputs[ShoeConfigParameter.ToeR2AngleZ].Value = editModeConfig.ToeR2AngleZ;
+            //inputs[ShoeConfigParameter.ToeR21AngleX].Value = editModeConfig.ToeR21AngleX;
+            //inputs[ShoeConfigParameter.ToeR21AngleY].Value = editModeConfig.ToeR21AngleY;
+            //inputs[ShoeConfigParameter.ToeR21AngleZ].Value = editModeConfig.ToeR21AngleZ;
         }
 
         public void Update()
@@ -198,9 +236,9 @@ namespace COM3D2.HighHeel.UI
 
             configName = GUILayout.TextField(configName, ConfigNameLayout);
 
-            if (GUILayout.Button(ExportLabel, NoExpand)) ExportEvent?.Invoke(this, new(configName));
-
             if (GUILayout.Button(ImportLabel, NoExpand)) ImportEvent?.Invoke(this, new(configName));
+
+            if (GUILayout.Button(ExportLabel, NoExpand)) ExportEvent?.Invoke(this, new(configName));
 
             GUILayout.EndHorizontal();
         }

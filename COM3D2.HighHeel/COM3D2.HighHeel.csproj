@@ -9,13 +9,19 @@
 
     <ItemGroup>
       <Reference Include="0Harmony">
-        <HintPath>..\..\Dependencies\0Harmony.dll</HintPath>
+        <HintPath>H:\[Modding]\COM3D2\[Projects]\[Plugin] HighHeels\Dependencies\0Harmony.dll</HintPath>
       </Reference>
       <Reference Include="Assembly-CSharp">
-        <HintPath>..\..\Dependencies\Assembly-CSharp.dll</HintPath>
+        <HintPath>H:\[Modding]\COM3D2\[Projects]\[Plugin] HighHeels\Dependencies\Assembly-CSharp.dll</HintPath>
       </Reference>
       <Reference Include="BepInEx">
-        <HintPath>..\..\Dependencies\BepInEx.dll</HintPath>
+        <HintPath>H:\[Modding]\COM3D2\[Projects]\[Plugin] HighHeels\Dependencies\BepInEx.dll</HintPath>
+      </Reference>
+      <Reference Include="Newtonsoft.Json">
+        <HintPath>H:\[Modding]\COM3D2\[Projects]\[Plugin] HighHeels\Dependencies\Newtonsoft.Json.dll</HintPath>
+      </Reference>
+      <Reference Include="UnityEngine">
+        <HintPath>H:\[Modding]\COM3D2\[Projects]\[Plugin] HighHeels\Dependencies\UnityEngine.dll</HintPath>
       </Reference>
     </ItemGroup>
 
@@ -24,12 +30,6 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="Unity3D.SDK" Version="2021.1.14.1" />
     </ItemGroup>
-    
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="xcopy /Y &quot;$(TargetPath)&quot; &quot;E:\Games\KISS\COM3D2\BepinEx\plugins\&quot;" />
-    </Target>
 	
 </Project>
