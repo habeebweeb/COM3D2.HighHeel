@@ -1,3 +1,5 @@
+using System.Reflection.Emit;
+
 using HarmonyLib;
 using UnityEngine;
 
@@ -41,6 +43,8 @@ public static class Hooks
 
             ShoeConfigs.Remove(__instance.body);
         }
+
+        HighHeelBodyOffset.Clean();
 
         var name = __instance.obj.name;
         int configNameIndex;
@@ -95,12 +99,12 @@ public static class Hooks
                 return;
         }
 
-        var (body, footL, toesL, _, _, _, footR, toesR, _, _, _) = transforms;
+        var (_, footL, toesL, _, _, _, footR, toesR, _, _, _) = transforms;
         var (offset, footLAngle, footLMax, toeLAngle, toeL0Angle, toeL01Angle, toeL1Angle, toeL11Angle, toeL2Angle,
             toeL21Angle, footRAngle, footRMax, toeRAngle, toeR0Angle, toeR01Angle, toeR1Angle, toeR11Angle, toeR2Angle,
             toeR21Angle) = config;
 
-        body.Translate(Vector3.up * offset, Space.World);
+        HighHeelBodyOffset.SetBodyOffset(__instance, offset);
 
         RotateFoot(footL, footLAngle, footLMax);
         RotateFoot(footR, footRAngle, footRMax);
@@ -197,6 +201,24 @@ public static class Hooks
 
         if (ShoeConfigs.ContainsKey(__instance))
             ShoeConfigs.Remove(__instance);
+    }
+
+    [HarmonyTranspiler]
+    [HarmonyPatch(typeof(Maid), "Update")]
+    public static IEnumerable<CodeInstruction> MaidUpdateTranspiler(IEnumerable<CodeInstruction> instructions)
+    {
+        CodeMatcher codeMatcher = new CodeMatcher(instructions);
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Sub))
+            .Advance(1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Maid), "body0")))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(HighHeelBodyOffset), nameof(HighHeelBodyOffset.GetBodyOffset))))
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Add));
+        codeMatcher.MatchForward(false, new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(Maid), "body0")))
+            .Advance(1)
+            .RemoveInstructionsWithOffsets(0, 1)
+            .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(HighHeelBodyOffset), nameof(HighHeelBodyOffset.GetSnityouOutScale))));
+        return codeMatcher.InstructionEnumeration();
     }
 }
 #pragma warning restore
