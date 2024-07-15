@@ -19,7 +19,7 @@ public static class HighHeelBodyOffset
 
     public static float GetSnityouOutScale(TBody body)
     {
-        if (BodyOffsets.TryGetValue(body, out float offset))
+        if (BodyOffsets.TryGetValue(body, out float offset) && offset != 0)
         {
             // SnityouOutScale = Thigh_SCL_.Scale ** 0.9
             float scale = (float)Math.Pow(Math.Pow(body.bonemorph.SnityouOutScale, 1 / 0.9) * (1 + offset / 2 / Vector3.Distance(body.Thigh_L.position, body.Calf_L.position)), 0.9);

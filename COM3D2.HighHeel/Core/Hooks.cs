@@ -67,6 +67,8 @@ public static class Hooks
     [HarmonyPatch(typeof(TBody), "LateUpdate")]
     public static void LateUpdate(TBody __instance)
     {
+        HighHeelBodyOffset.SetBodyOffset(__instance, 0);
+
         if (__instance.boMAN || !__instance.isLoadedBody)
             return;
 
